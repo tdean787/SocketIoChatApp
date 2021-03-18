@@ -19,30 +19,41 @@ io.on("connection", (socket) => {
   //   console.log("disconnected");
   // });
 
+  // socket.on("setUsername", (data) => {
+  //   if (users.indexOf(data) > -1) {
+  //     users.push(data);
+  //     socket.emit("userSet", { username: data });
+  //     console.log(data);
+  //   } else {
+  //     socket.emit(
+  //       "userExists",
+  //       data + " username is taken. Please try another."
+  //     );
+  //   }
+  // });
+
   socket.on("setUsername", (data) => {
-    if (users.indexOf(data) > -1) {
-      users.push(data);
-      socket.emit("userSet", { username: data });
-    } else {
-      socket.emit(
-        "userExists",
-        data + " username is taken. Please try another."
-      );
-    }
+    console.log(data);
+    users.push(data);
+    socket.emit("userSet", { username: data });
+  });
+
+  socket.on("msg", (data) => {
+    io.emit("newmsg", data);
   });
 
   socket.on("typing", (data) => {
     // console.log("typing registered");
-    io.emit("typing", data);
+    socket.emit("typing", data);
   });
 
-  socket.on("chat message", (msg) => {
-    console.log("message: " + msg);
+  socket.on("chat message", (data) => {
+    console.log("message: " + data.messageBody);
   });
 
   // io.on("connection", (socket) => {
-  socket.on("chat message", (msg) => {
-    io.emit("chat message", msg);
+  socket.on("chat message", (data) => {
+    io.emit("chat message", data);
   });
   // });
 });

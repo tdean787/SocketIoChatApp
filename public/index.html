@@ -5,8 +5,20 @@
     <link rel="stylesheet" href="/style.css" type="text/css" />
   </head>
   <body>
-    <input type="text" name="name" value="" placeholder="Enter your name!" />
-    <button type="button" name="button">Start Chatting!</button>
+    <div class="username-container">
+      <input
+        type="text"
+        id="name"
+        name="name"
+        value=""
+        placeholder="Enter your name!"
+      />
+      <button type="button" name="button" onclick="setUsername()">
+        Start Chatting!
+      </button>
+    </div>
+
+    <div class="user-messages"></div>
     <ul id="messages"></ul>
     <div class="form-container">
       <span id="user-typing"></span>
@@ -19,19 +31,31 @@
     <script>
       var socket = io();
       var messages = document.getElementById("messages");
+      const userMessages = document.querySelector(".user-messages");
       var form = document.getElementById("form");
       var input = document.getElementById("input");
       let typing = false;
       let timeout = undefined;
       let user = undefined;
       const userTyping = document.querySelector("#user-typing");
-      const userName = prompt("What is your name?");
+      let userName = document.querySelector("#name").value;
+      const userNameContainer = document.querySelector(".username-container");
 
       form.addEventListener("submit", function (e) {
         e.preventDefault();
-
+        let currentDate = new Date();
+        let time =
+          currentDate.getHours() +
+          ":" +
+          currentDate.getMinutes() +
+          ":" +
+          currentDate.getSeconds();
         if (input.value) {
-          socket.emit("chat message", input.value);
+          socket.emit("chat message", {
+            messageBody: input.value,
+            user: userName,
+            time: time,
+          });
           input.value = "";
         }
       });
@@ -40,6 +64,44 @@
         typing = false;
         socket.emit("typing", false);
       }
+
+      function setUsername() {
+        console.log("button clicked");
+        userName = document.querySelector("#name").value;
+        socket.emit("setUsername", userName);
+        userNameContainer.classList = "hidden";
+      }
+
+      function sendMessage() {
+        let msg = document.querySelector("#message").value;
+        if (msg) {
+          socket.emit("msg", { message: msg, user: user });
+        }
+      }
+
+      // socket.on("userExists", (data) => {
+      //   document.querySelector("#error-container").innerHTML = data;
+      // });
+
+      socket.on("userSet", (data) => {
+        user = data.username;
+        console.log("user set");
+        userMessages.innerHTML =
+          '<input type = "text" id = "message">\
+         <button type = "button" name = "button" onclick = "sendMessage()">Send</button>\
+         <div id = "message-container"></div>';
+        // document.querySelector(
+        //   "#message-container"
+        // ).innerHTML += `${user} has connected`;
+      });
+
+      socket.on("newmsg", (data) => {
+        if (user) {
+          document.querySelector(
+            "#message-container"
+          ).innerHTML += `<div><b> ${data.user}: </b> ${data.message} </div>`;
+        }
+      });
 
       input.addEventListener("keydown", (event) => {
         console.log(event);
@@ -53,15 +115,15 @@
         if (typing == true) {
           userTyping.textContent = `${data.user} is typing...`;
           // console.log("typing received by client");
-          console.log(data);
+          // console.log(data);
         } else {
           userTyping.textContent = "";
         }
       });
 
-      socket.on("chat message", function (msg) {
+      socket.on("chat message", (data) => {
         var item = document.createElement("li");
-        item.textContent = msg;
+        item.textContent = `[${data.time}] - ${data.user}: ${data.messageBody}`;
         messages.appendChild(item);
         window.scrollTo(0, document.body.scrollHeight);
       });
