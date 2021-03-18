@@ -5,17 +5,24 @@
     <link rel="stylesheet" href="/style.css" type="text/css" />
   </head>
   <body>
-    <div class="username-container">
-      <input
-        type="text"
-        id="name"
-        name="name"
-        value=""
-        placeholder="Enter your name!"
-      />
-      <button type="button" name="button" onclick="setUsername()">
-        Start Chatting!
-      </button>
+    <div class="main">
+      <div class="username-container">
+        <input
+          type="text"
+          id="name"
+          name="name"
+          value=""
+          placeholder="Enter your name!"
+        />
+        <button
+          class="chat-button"
+          type="button"
+          name="button"
+          onclick="setUsername()"
+        >
+          Start Chatting!
+        </button>
+      </div>
     </div>
 
     <div class="user-messages"></div>
@@ -23,7 +30,11 @@
     <div class="form-container">
       <span id="user-typing"></span>
       <form id="form" action="">
-        <input id="input" autocomplete="off" /><button>Send</button>
+        <input
+          id="input"
+          autocomplete="off"
+          placeholder="Enter your message"
+        /><button>Send</button>
       </form>
     </div>
 
@@ -66,10 +77,14 @@
       }
 
       function setUsername() {
-        console.log("button clicked");
         userName = document.querySelector("#name").value;
-        socket.emit("setUsername", userName);
-        userNameContainer.classList = "hidden";
+        if (userName == "") {
+          return;
+        } else {
+          console.log("button clicked");
+          socket.emit("setUsername", userName);
+          userNameContainer.classList = "hidden";
+        }
       }
 
       function sendMessage() {

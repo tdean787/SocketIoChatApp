@@ -25,6 +25,24 @@ body {
   position: absolute;
   width: 100%;
 }
+
+.username-container {
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  max-width: 500px;
+}
+
+.main {
+  height: 100vh;
+  background-color: lightgray;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  flex-direction: column;
+  text-align: center;
+}
+
 #input {
   border: none;
   padding: 0 1rem;
@@ -55,6 +73,31 @@ body {
 }
 #messages > li:nth-child(odd) {
   background: #efefef;
+}
+
+#name {
+  border-radius: 31px;
+  font-family: Ubuntu-Bold;
+  font-size: 18px;
+  color: #8f8fa1;
+  line-height: 1.2;
+  display: block;
+  height: 62px;
+  padding: 0 35px 0 35px;
+}
+
+.chat-button {
+  border-radius: 31px;
+  background-color: #827ffe;
+  max-width: 150px;
+  margin: 1em auto;
+  padding: 1em;
+  color: white;
+  font-family: Ubuntu-Bold;
+  font-size: 16px;
+  color: #fff;
+  line-height: 1.2;
+  text-transform: uppercase;
 }
 
 .hidden {
