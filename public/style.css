@@ -60,3 +60,7 @@ body {
 .hidden {
   display: none;
 }
+
+.user-messages {
+  display: none;
+}
