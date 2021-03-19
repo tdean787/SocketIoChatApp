@@ -1,20 +1,33 @@
 const app = require("express")();
 const http = require("http").createServer(app);
+const fs = require("fs").promises;
 const io = require("socket.io")(http);
 const express = require("express");
 
-const server = require("http").createServer();
+// const server = require("http").createServer();
+
+const server = http.createServer(requestListener);
 
 // app.get("/", (req, res) => res.sendFile(__dirname + "/index.html"));
 app.use(express.static("../public"));
-const port = process.env.PORT || 3001;
-app.listen(port, () => console.log("server started on port", port));
+const port = process.env.PORT || 3000;
+// app.listen(port, () => console.log("server started on port", port));
 
-// server.listen(port, () => console.log(`listening on ${port}`));
+server.listen(port, () => console.log(`listening on ${port}`));
 
-// http.listen(3001, () => {
-//   console.log("listening on 3001");
-// });
+const requestListener = function (req, res) {
+  fs.readFile(__dirname, +"/index.html")
+    .then((contents) => {
+      res.setHeader("Content-Type", "text/html");
+      res.writeHead(200);
+      res.end(contents);
+    })
+    .catch((err) => {
+      res.writeHead(500);
+      res.end(err);
+      return;
+    });
+};
 
 let users = [];
 
